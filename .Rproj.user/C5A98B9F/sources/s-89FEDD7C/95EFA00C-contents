@@ -1,0 +1,168 @@
+---
+title: "Project 1 by Ana Cardenas"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+
+mydataset <- read.csv("Anasspotify.csv")
+mydataset2 <- read.csv("top50contry.csv")
+
+```
+*To me, music is an essential part of my everyday life. Music offers an opportunity to escape from the stress that accompanies my academic schedule and workload. Spotify has been my music source for years, and I knew the data collected from my Spotify would be an accurate representation of the songs and genre I most often listen to. During my data search, I found a data set from Kaggle that had collected the top fifty songs by country that were most played on Spotify in the year 2019. I was interested to learn which songs I had listened to that also appeared in the top 50 songs of a specific country. The data set from Kaggle also contained variables regarding the beats per minute of the song, energy of the song, danceability of the song, loudness of the song, liveness of the long, valence of the song, duration of the long, acousticness of the song, and popularity of the song. Comparing these two data sets gave me a chance to learn more about the songs and genre that I tend to listen to. My dataset contained the date, song title, artist name, and the number of minutes I listened to the specific song. Combining both data resulted in the necessary amount of numeric and total variables needed. Within this report, different R-Studio functions that were learned in class will be used to manipulate the data in order to learn more about specific songs. Different statistics will be applied to specific numerical variables as well. Plots will then be made to show relationships among different numerical variables and categorical variables. Lastly, the data will be manipulated using clustering functions in order to determine more relationships among the numerical and categorical variables. It is expected that the danceability of a song would also have high energy and liveness. It is also expected that when clustering, the same artist with a different song will be close in distance to themselves. *
+
+```{r}
+
+library(dplyr)
+library(tidyverse)
+ana_spotify <- mydataset
+top50spotifysongs <- mydataset2
+ana_spotify2 <- ana_spotify %>% separate(endTime, into = c("Year", "Month", "Day", "EndTimeHour", "EndTimeMinute"))
+Widerana_spotify2 <- ana_spotify2 %>% pivot_wider(names_from = "artistName", values_from = "Year")
+longana_spotify2 <-  Widerana_spotify2 %>% pivot_longer(cols = 7:915, names_to = "artistName", values_to = "Year")
+BothData <- left_join(ana_spotify2,top50spotifysongs, by = c("trackName"= "title"))
+
+anti_join(ana_spotify2, top50spotifysongs, by = c("trackName" ="title"))
+
+anti_join(top50spotifysongs, ana_spotify2, by = c("title" = "trackName"))
+
+
+```
+*To start, my dataset was made tidy by using the function “separate” to make the date the song was played into its own variables rather than being combined with the time the song stopped playing. The date was separated even more into “Year”, “Day”, and “Month”. This was done to produce a clearer way to read the date. The “wider” function and long function were used to demonstrate how those functions work. Artist name and year were made longer and then wider. When they were made wider, every artist had a column with a year found in one of their rows. After, the artist and year were reverted to their own distinct columns using the “longer” function.There are 5,807 tracks that are in Ana’s Spotify data set that are not found in the Top 50 Spotify data set. There are 803 tracks that are in the Top 50 Spotify data set that are not found in Ana’s Spotify data set.In order to keep minutes played for every track on Ana’s Spotify data set, the “left_join” function was used to combine both data sets by the common variable “track” and “title” of the song. After doing this, the variables that were found in the Top 50 Spotify data were combined with Ana’s Spotify data. Rows that matched tracks found in both data sets contained a result. Any track that was in Ana’s Spotify data that was not found in the Top 50 Spotify data set contained rows with “NA” under the new variables added.*
+
+```{r}
+BothData %>% group_by(artistName, trackName) %>% summarize(mean_minsplayed = mean(msPlayed)) %>% arrange(desc(mean_minsplayed))
+BothData %>% filter(artistName == "Maroon 5")
+BothData %>% select(artistName, trackName)
+BothData%>% select(artistName, trackName, msPlayed) %>% arrange(desc(msPlayed))
+BothData %>% mutate(hoursplayed = msPlayed/60)
+
+```
+*The following dplry functions were used on the new combined data set “BothData”: filter, select, arrange, group_by, mutate, and summarize. The function “group_by”, “summarize”, and “arrange” were first used to get the mean minutes played of a specific track in descending order. If a song was listened to more than once, the group_by function ensured that the result would produce the mean minutes played of the track. The results will be further discussed in the summary statistics below. The next function, “filter”, was used to obtain only the rows containing information about the band Maroon 5. It can be observed that the only track by Maroon 5 that I listened to that was also on the Top 50 charts was their song “Memories”. The “select” function was used to obtain only the columns “artistName” and “trackName”. This function allowed me to look over all the artists and songs I listened to. The final dplyr function used was “mutate”. This function was used to convert the minutes the song was played into the hours the song was played. *
+
+```{r}
+BothData%>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), mean, na.rm= T)
+BothData %>% group_by(artistName, trackName) %>% summarize(mean_minsplayed = mean(msPlayed)) %>% arrange(desc(mean_minsplayed))
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), sd, na.rm= T)
+BothData %>% group_by(trackName) %>% summarize(sd_minsplayed = sd(msPlayed)) %>% arrange(desc(sd_minsplayed))
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), var, na.rm= T)
+BothData %>% group_by(trackName) %>% summarize(var_minsplayed = var(msPlayed)) %>% arrange(desc(var_minsplayed))
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), n_distinct, na.rm= T)
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), min, na.rm= T)
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live"), max, na.rm= T)
+BothData %>% summarize_at(c("msPlayed", "bpm", "nrgy", "dnce", "live", "pop"), median, na.rm= T)
+BothData %>% count(msPlayed, bpm, nrgy, dnce, live, pop, sort = TRUE)
+df2 <- BothData %>% na.omit %>% select_if(is.numeric)
+cor(df2)
+df3 <- BothData %>% na.omit %>% select(msPlayed, bpm, nrgy, dnce, live, pop)
+cor(df3)
+summarystatsofdata <- BothData %>% select(msPlayed, bpm, nrgy, dnce, live, pop)
+summary(summarystatsofdata, digits = 2)
+
+CleanData1 <- BothData[!duplicated(BothData$trackName),]
+BothDataClean <- CleanData1%>% na.omit()
+
+summarystats2 <- BothDataClean %>% na.omit %>% select(msPlayed, bpm, nrgy, dnce, live, pop)
+cor(summarystats2)
+
+BothDataClean %>% group_by(top.genre) %>% summarise(n=n()) %>% mutate(frequency = n/sum(n)) %>% arrange(desc(frequency))
+BothData%>% group_by(trackName) %>% summarise(n=n()) %>% mutate(frequency = n/sum(n)) %>% arrange(desc(frequency))
+BothData%>% na.omit %>% group_by(country) %>% summarise(n=n()) %>% mutate(frequency = n/sum(n)) %>% arrange(desc(frequency))
+BothData%>% group_by(artistName) %>% summarise(n=n()) %>% mutate(frequency = n/sum(n)) %>% arrange(desc(frequency))
+```
+ *Since the “BothData” contained many numerical variables, only specific numerical variables were chosen to run summary statistics on. The following numerical variables were chosen to run summary statistics on: danceability level (dnce), energy level (ngry), liveness of the song (live), popularity level (pop), and minutes the song was played (msPlayed). The first statistic run on the numerical variables was mean. Mean calculates the central average of each numerical variable. To determine which song had the highest mean minutes played, the “group_by” and “arrange” functions were used. It was observed that the song, “I’ll Give Thanks” had the highest mean minutes played. Standard deviation of the numerical variables was than obtained. Popularity level and liveliness had the lowest standard deviation. This indicated that those two variables variations from their mean was low.  When grouped by track name and arranged in descending order, it was determined that the song “Oceans” had the highest standard deviation of minutes played. Variance of the numerical variables was then taken, and it was found that “Oceans” had the highest variance of minutes played which was expected. The amount of each unique value within each numerical variable was obtained using the “n_distinct” function. Minutes played had the most unique values out of the numerical variables. Energy level had the smallest numerical value which was determined using the function “min”.  The “max” function resulted in minutes played variable having the largest numerical value. To determine the middle numerical value of each numerical variable, the function “median” was used. The “count” function obtained the number of values within each row. A correlation matrix was then created for the numerical variables. There were no significant correlations among the numerical variables. To see if there were higher results among the numerical variables if there were no duplicates or NAs among the data, the duplicates of track names were removed from the dataset. The NAs were also removed from the combined dataset. After doing this, higher values were obtained. A table was then created to display the original combined data’s min, max, median, mean, 1st quartile, 3rd quartile, and the number of NA’s. among each numerical variable. This provided a clearer way to compare results. Frequency was determined for categorical variables. It was found that the “pop” genre had the highest frequency among the dataset. The song “Memories” by Marron 5 had the highest frequency among the tracks in the dataset. Malaysia was the country that had the highest frequency among the tracks in the dataset. Taylor Swift was the most played artist in the dataset. *
+                                                  
+
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+
+#Plot 1:
+BothDataClean %>% select(msPlayed, bpm, nrgy, dnce, live, pop) %>% cor() %>% as.data.frame() %>% rownames_to_column() %>% pivot_longer(-1) %>% ggplot(aes(rowname,name, fill=value)) + geom_tile() + geom_text(aes(label=round(value,2)))+xlab("")+ylab("") + scale_fill_gradient2(low="yellow", high="red") + theme(axis.text.x = element_text(angle = 45, hjust = 1))+ ggtitle("Correlation Heatmap")
+
+```
+*The combined data without duplicates nor NAs was used for the rest of the project. The first plot made was a correlation heatmap. Based on the correlation heatmap, it can be determined that there were no significant correlations between the numerical variables chosen. It was observed that danceability level and popularity level had a slightly high potential relationship. This could also be observed between beats per minutes and minutes played. Energy level and beats per minute had a low potential relationship between the two.*
+
+```{r}
+#Plot 2: 
+BothDataClean%>% ggplot(aes(x=pop, y=nrgy, color = top.genre)) + geom_point(size = 4, alpha = .5) + ggtitle("Popularity Level vs Energy Level vs Genre") +xlab("Popularity Level") + ylab("Energy Level")
+```
+*The second plot made was a scatter plot comparing the energy level of a track with the beats per minute of the track while also visualizing the different genres in the dataset. From this plot, it can be observed that the popularity level and energy level was high for most tracks. It can also be observed that one of the least popular tracks was under the genre “anime rock”. *
+
+```{r}
+#Plot 3:
+ggplot(BothDataClean, aes(x=top.genre, fill= country)) + geom_bar(stat = "count") + theme(axis.text.x = element_text(angle= 90))+ xlab("Genre") + ggtitle("Count of Genre")
+BothData %>% na.omit %>% ggplot(aes(x= top.genre, fill= country)) + geom_bar(stat = "count") + theme(axis.text.x = element_text(angle= 90))+ xlab("Genre") + ggtitle("Count of Genre")
+```
+*The third plot was used to determine what type of genre I most often listen to. This was done by creating a plot with the stat function “count”. The plot also included which country that genre was popular in. It can be observed that the Pop Genre and Dance Pop Genre are the two genres that I listen to most often. It can also be determined that those two genres are genres that are the most popular in more than three countries. To ensure this was accurate the plot was made again with the original data that had the duplicates present. When this was done, it was found that Australian Pop Genre was among the highest genres that I listen to. *
+```{r}
+#Plot 4:
+BothDataClean %>% ggplot(aes(x = bpm, fill = pop)) + geom_bar(aes(y = msPlayed, width = 1), stat = "summary", fun.y = "mean") + scale_y_continuous("Mean Minutes Played") + ggtitle("Song Avg. Minutes Played vs Popularity and Beats Per Minute of the Title") + xlab("Beats Per Minute")
+
+```
+*The last plot made was to determine if there was a relationship with the mean minutes played and beats per minute that was potentially visible in the correlation matrix. In this final plot, popularity was also considered. The bar graph produced showed that most beats per minute values had a high mean minutes played. It didn’t appear to increase with increasing beats per minute which could be because there were not a lot of songs with high beats per minute. *
+
+```{r}
+library(ggplot2)
+library(tidyverse)
+library(cluster)
+sil_width2<- vector()
+clusteringdata1 <- BothDataClean %>% select(nrgy, bpm, pop,live, acous, pop, spch, everything())
+sil_width1 <- vector()
+for(i in 2:10){
+  pam_fit2 <- clusteringdata1 %>% select(nrgy, bpm, pop, dnce, live, acous, spch, pop) %>% pam(i)
+  sil_width1[i] <- pam_fit2$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x=1:10, y= sil_width1))+ scale_y_continuous(name="k", breaks = 1:10)
+pam1 <- clusteringdata1 %>% select(nrgy, bpm, pop, dnce, live, acous, spch, pop) %>% pam(3)
+final1 <- clusteringdata1 %>% mutate(cluster=as.factor(pam1$clustering))
+confmat1 <- final1%>% group_by(top.genre) %>% count(cluster) %>% arrange(desc(n)) %>% pivot_wider(names_from = "cluster", values_from = "n", values_fill = list('n'=0))
+confmat1
+plot(pam1, which = 2)
+library(GGally)
+ggpairs(final1, columns = 1:6, aes(color=cluster))
+ggplot(final1, aes(x=acous, y=bpm, color= cluster))+geom_point()
+
+clusteringdata1%>%mutate(cluster=pam1$clustering)%>%rename_all(function(x)sub("_", ".", x))%>%
+group_by(cluster)%>%mutate(n=n())%>%group_by(cluster,n)%>%
+summarize_at(1:6,.funs = list("mean"=mean,"median"=median,"sd"=sd),na.rm=T)%>%
+pivot_longer(contains("_"))%>%separate(name,sep="_",into=c("variable","stat"))%>%
+pivot_wider(names_from = "variable",values_from="value")%>%arrange
+```
+*The final step in the project was to cluster numerical variables. The variables chosen to cluster were beats per minute of the song, energy of the song, danceability of the song, liveness of the long, and acousticness of the song. To determine the cluster size, the average silhouette width was plotted. A cluster size of 3 was suggested and chosen. It can be observed that the cluster solution had an average silhouette width of 0.3. Thus, the structure was weak. The clusters did not map nicely to most of the variables. The plot of beats per minute vs acousticness showed the clusters most distinctly. That plot was observed closely, it could be determined that cluster 3 had higher beats per minute and lower acousticness, cluster 1 had lower beats per minute and lower acousticness, and cluster 2 had higher acousticness and lower beats per minute. To further characterize the clusters, summary statistics was performed on the clusters. Cluster 1 had tracks with the most energy. Cluster 2 had tracks with the highest popularity and acousticness. Cluster 3 had tracks with the highest beats per minute. *
+
+```{r}
+clusteringdata2 <- BothDataClean %>% select(top.genre, country, trackName, artistName, pop, live, nrgy, everything())
+sil_width3 <- vector()
+for(i in 2:10){
+  pam_fit3 <- clusteringdata2%>% select(top.genre, country, trackName, artistName, pop, live, nrgy) %>% pam(i) 
+  sil_width3[i] <- pam_fit3$silinfo$avg.width
+}
+ggplot() + geom_line(aes(x=1:10, y = sil_width3))+scale_x_continuous(name= "k", breaks = 1:10)
+dat2 <- clusteringdata2 %>% select(top.genre, country, trackName, artistName, pop, live, nrgy) %>% mutate_if(is.character, as.factor)
+gower1 <- daisy(dat2, metric = "gower")
+pam2 <- pam(gower1, k = 2, diss = T)
+pam2
+
+gower1%>%as.matrix%>%as.data.frame%>%rownames_to_column%>%pivot_longer(-1,values_to="distance")%>%
+  filter(rowname!=name)%>%distinct(distance,.keep_all = T)%>%filter(distance%in%c(min(distance),max(distance)))
+
+clusteringdata2%>% slice(1,39)
+clusteringdata2%>% slice(11,45)
+
+dat2%>%mutate(cluster=pam2$clustering)%>%group_by(cluster)%>%
+filter(!is.na(top.genre))%>%count(top.genre)%>%mutate(prop=n/sum(n))%>%
+pivot_wider(-n,names_from=top.genre,values_from=prop,values_fill = list(prop=0))
+
+```
+*Clustering by categorical variables was then produced by the “PAM” and “gower” functions. Two clusters were suggested and therefore chosen. After clustering country, artist name, track name, top genre, popularity level, liveness level, and energy level, tracks most similar and most dissimilar were determined. It was found that the tracks most like each other were performed by the same artist. The two tracks found most dissimilar were not performed by the same artist which was expected. To characterize the clusters more, proportions were determined based on the top genre. Cluster 1 had majority of tracks in the Latin genre. Cluster 2 had tracks in multiple genres. Cluster 3 had tracks that were majority among rap genres.*
+```{r}
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

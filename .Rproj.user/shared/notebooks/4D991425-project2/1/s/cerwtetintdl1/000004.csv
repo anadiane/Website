@@ -1,0 +1,7 @@
+"0","#Manova Test:
+man1 <- manova(cbind(al, su, bgr, bu,sc, sod, pot, hemo, pcv, wc, rc)~ba, data = kidney_disease)
+"
+"2","NAs introduced by coercion"
+"2","Error in `[[<-.data.frame`(`*tmp*`, i, value = c(262L, 234L, 5L, 188L,  : 
+  replacement has 2596 rows, data has 236
+"

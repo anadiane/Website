@@ -1,0 +1,232 @@
+---
+title: "Project 2"
+author: "Ana Cardenas"
+date: "4/21/2020"
+output:
+  html_document:
+    df_print: paged
+  word_document: default
+  pdf_document: default
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
+tidy=TRUE, tidy.opts=list(width.cutoff=60), R.options=list(max.print=100))
+
+kidney_disease <- read.csv("kidney_disease.csv")
+```
+
+*The dataset chosen was obtained from Kaggle. A career in the medical field has been a goal of mine since high school. My interest in medicine and studying different diseases influenced my decision in choosing this dataset. The dataset contains different characteristics of about 400 patients in order to decipher indications of chronic kidney disease. The dataset contains 400 observations and 26 variables. The dataset measures blood pressure, red blood cells, albumin, sugar, red blood cell count, pus cell, pus cell clumps, bacteria precense, blood glucose random, blood urea, white blood cell count, hypertension, diabetes mellitus, coronary artery disease, anemia, chronic kidney disease classification, and more. In this report, a variety of R studio functions will be used to manipulate and model the data. First a MANOVA will be run followed by other tests to determine significant differences across multiple variables. A randomization test, plots, linear regressions, boostrapping, logistic regressions, and a LASSO regression are among the functions that will be used to model, test, and make predictions with the dataset being used.*
+
+```{r}
+library(lmtest)
+
+library(vegan)
+library(tidyverse)
+library(dplyr)
+#Manova Test:
+man1 <- manova(cbind(al, su, bgr, bu,sc, sod, pot, hemo, pcv, wc, rc)~ba, data = kidney_disease)
+summary(man1)
+#Univariate Anova: 
+summary.aov(man1)
+
+#Probability of at least one type 1 error: 
+1-((.95)^2)
+#Bonferroni Correction:
+.05/2
+```
+
+*Number One Explanation: A one-way MANOVA was conducted to determine the effect of bacteria being present or not present on multiple dependent variables. Null Hypothesis: For each response variable, the means of the the groups are equal. Alternative Hypothesis: For at lease 1 response variable, at least 1 group mean differs. Significant differences were found between presence of bacteria and no presence of bacteria for at least one of the dependednt variables, Pillai trace = 0.26, pseudo F= 6.18, p = <.0001. Univariate ANOVAs for each dependent variable were conducted as follow-up tests to the MANOVA. Since only two groups were being compared, a post hoc anaylsis was not conducted.The univariate ANOVAs for albumin, sugar, blood glucose random, blood urea, serum creatinine, sodium, hemoglobin, packed cell volume, white blood cell count, and red blood cell count were significant, p<.05 respecitvely. Bonferroni method for controlling Type one error rates for multiple comparison was calculated based on a running two tests. The boneferroni significance level used was .025. Using this, groups were found to differ from each other significantly in terms of albumin, sugar, blood glucose random, blood urea, hemoglobin, packed cell volume, and red blood cell count. The probability of at least one type one error was caluclated to be .098. Thus there was 9.74% chance of a type one error. MANOVA has multiple assumptions such as using random samples, mulivariate normalility of dependent variables, homogenity of within-group covariance matrices, linear relationships among dependent variables, no extreme univariate or mulivariate outliers, no multicollinearity. Since these observations are more likely to have been collected from people suffering from similar symptoms it is unlikely that the data collected is from random samples.*
+
+```{r}
+kidney_disease[kidney_disease==""] <- NA
+kidney_disease1 <- na.omit(kidney_disease)
+kidney_disease1
+kidney_disease1$wc <- as.numeric(kidney_disease1$wc)
+
+#Randomization Test:
+
+measureddifference <- mean(kidney_disease1[kidney_disease1$ba == "notpresent",]$wc)- mean(kidney_disease1[kidney_disease1$ba == "present",]$wc)
+measureddifference
+
+meandifference1 <- vector()
+for (i in 1:5000) {
+  random <- data.frame(wc=sample(kidney_disease1$wc), bapresent = kidney_disease1$ba)
+  meandifference1 [i] <- mean(random[random$bapresent == "notpresent",]$wc) - mean(random[random$bapresent == "present",]$wc)
+}
+
+mean(meandifference1 > 16.339 | meandifference1< -16.339)
+mean(meandifference1>15.951)*2
+t.test(data = kidney_disease1, wc~ba)
+
+#Plot:
+{hist(meandifference1,main="",ylab=""); abline(v = .05,col="red")}
+```
+*Number Two Explanation: The test chosen was a Permutation Randomization Test. The null hypothesis is that mean white blood cell count is the same for a patient with bacteria present vs bacteria not present. It is known that often when the body is fighing bacteria there is a higher white blood cell count. The alternate hypothesis is that the mean white blood cell count is different for a patient with bacteria present vs bacteria not present. The calculated actual mean difference between the groups was 16.339. A randomization test was then conducted by scrambling the data and breaking the associated between white blood cell count and bacteria being present. Mean difference was computed 5000 times. The p-value was calculated to be .05 by doing a two tail test. Thus, the null hypothesis cannot be rejected. The mean white blood cell count is not  different between a patient with bacteria present vs a patient with no bacteria present. In the plot, the red line is where the actual mean difference is. The bars are expected mean differences if there was no association between white blood cell count and bacteria being present (null hypotheis being true). A t-test was conducted to confirm this conclusion. The p-value in the t-test was greater than .05. Therefore, the conclusion holds true.*
+
+```{r}
+#Linear regression model with interaction and mean centering: 
+kidney_disease1$rc <- as.numeric(kidney_disease1$rc)
+kidney_disease1$hemo <- as.numeric(kidney_disease1$hemo)
+kidney_disease1$hemo_c <- kidney_disease1$hemo-mean(kidney_disease1$hemo, na.rm=T)
+kidney_disease1$ane <- as.character(kidney_disease1$ane)
+library(lmtest)
+fit1 <- lm(rc ~ hemo_c*ane, data = kidney_disease1)
+summary(fit1)
+
+#Plot regression: 
+qplot(x = rc, y = hemo_c, color = ane, data = kidney_disease1) +
+stat_smooth(method = "lm", se = FALSE, fullrange = TRUE)
+
+#Check Assumptions graphically or hypothesis testing: 
+resids <- fit1$residuals; fitvals <- fit1$fitted.values
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, col="red")
+ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids, col = 'red'))
+
+#Recompute regression with robust standard errors via coeftest: 
+coeftest(fit1, ycoc=vcocHC(fit1))
+```
+
+*Numebr Three Explanation: It is common for anemic patients to have low red blood cell counts and to be low in hemoglobin. Thus, anemia classification, hemoglobin levels, and red blood cell count were the variables chosen to run a regression model with an interaction. First, hemoglobin was mean centered. A linear regression was then run with an interaction between anemia and mean center hemoglobin levels to test the effect of anemia differs based on mean centered hemoglobin levels. Controlling for hemoglobin, red blood cell count in non-anemic patients is 8.15 millions/cmm lower than patients that are anemic on average (t=-1.382). Non-anemic patients show an increase of 2.50 millions/cmm for every 1-unit increase in hemoglobin on average(t=9.938). Predicted red blood cell count for a non-anemic patient with an average hemoglobin is 32.70 millions/cmm. The slope for hemoglobin on red blood cell count is .398 less for patients with anemia compared to patients that are not anemic(t=-0.377). Based on the ggplot made, the assumption for homoscedasticity does not appear to be met. The residuals do not look equally distributed. Thus, it appears that linearity is not met as well. Normallity is assumed because there is only a little deviation at each end. After recomputing regression model results with robust standard errors, predicted red blood cell count for an average hemoglobin, non-anemic is 32.70 millions/cmm. Also, non-anemic patients show an increase of 2.494 millions/cmm for every one unit increase in hemoglobin on average (significant effect, t=9.94, p<.001). All other effects were non-significant. The model explains 60.55% of variation (Adjusted R-squared:  0.6055).*
+
+```{r}
+#Regression with bootstrap standard errors: 
+samp_distn<-replicate(5000, {
+boot_dat <- sample_frac(kidney_disease1, replace=T) #bootstrap your data
+fit2 <- lm(rc~hemo_c*ane, data=boot_dat) #fit model
+coef(fit2) #save coefs
+})
+samp_distn %>% t %>% as.data.frame %>% summarize_all(sd)
+```
+
+*Number Four Explanation: After bootstrapping the standard errors, it can be determined that the standard errors for majority of the variables decreased. *
+
+```{r}
+#Logistic regression predicting a binary categorical variable from at least two explanatory variables:
+kidney_disease1$bu <- as.numeric(kidney_disease1$bu)
+
+data <- kidney_disease1%>% mutate(y=ifelse(classification=="ckd",1,0))
+
+fit3 <- glm(y ~ htn + bu + cad, data = data, family = "binomial")
+coeftest(fit3)
+exp(coef(fit3)) %>% round(3) %>% t
+
+#confusion matrix: 
+library(dplyr)
+probs <- predict(fit3, type = "response")
+table(predict= as.numeric(probs>.5), truth = data$y) %>% addmargins()
+data
+#Accuracy, Sensitivity, Specificity, Recall:
+
+#Accuracy:
+(115+37)/158
+
+#Sensitivity: 
+37/43
+
+#Specificity: 
+115/115
+
+#Precision (PPV): 
+37/37
+
+#GGplot: 
+
+data$logit <- predict(fit3, type = "link")
+
+data%>%ggplot()+geom_density(aes(logit,color=classification,fill=classification), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)
+
+#ROCplot: 
+library(plotROC)
+predicted <- ifelse(data$probs>.5,1,0)
+ROCplot <- ggplot(data) + geom_roc(aes(d=y, m=probs), n.cuts = 0)
+ROCplot
+calc_auc(ROCplot)
+
+#AUC: 
+
+library(knitr)
+opts_chunk$set(fig.align="center", fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+class_diag<-function(probs,truth){
+  
+  tab<-table(factor(probs>.5,levels=c("FALSE","TRUE")),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE & is.logical(truth)==FALSE) truth<-as.numeric(truth)-1
+  
+  ord<-order(probs, decreasing=TRUE)
+  probs <- probs[ord]; truth <- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup<-c(probs[-1]>=probs[-length(probs)], FALSE)
+  TPR<-c(0,TPR[!dup],1); FPR<-c(0,FPR[!dup],1)
+  
+  n <- length(TPR)
+  auc<- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+class_diag(probs, data$y)
+
+#10-Fold CV: 
+
+set.seed(1234)
+k=10
+data2 <- data %>% sample_frac
+folds <- ntile(1:nrow(data2), n=10)
+diags <- NULL
+for (i in 1:k) {
+  train<- data2[folds !=1,]
+  test <- data2[folds ==i, ]
+  truth <- test$classification
+  fit4 <- glm(classification ~ htn + bu + cad, data = train, family = "binomial")
+  probs2 <- predict(fit4, newdata = test, type = "response")
+  diags <- rbind(diags, class_diag(probs2, truth))
+}
+diags %>% summarize_all(mean)
+```
+
+*Number Five Explanation: Odds of chronic kidney disease for a patient with no hypertension, no coronarty artery disease and bu=0 is .001.Controlling for blood urea, odds of chronic kidney disease for a person with hypertension is  2688378176 times odds of chronic kidney disease for a person without hypertension. Controlling for hypertension and coronary artery disease, for every one unit increase in blood urea level odds of chronic kidney disease increases by a factor of 1.112. Controlling for hypertension and blood urea, odds of chronic kidney disease for a person with coronary artery disease is .606 times odds odds of chronic kidney disease for a person without coronary artery disease. A confusion matrix was made. The accuracy was calculated to be .96. Sensitivity, which is the true positive rate, was calculated to be .8604. Specificity, which is the true negative rate, was calculated to be 1. Precision, which is the positive predicted value, was calculated to be 1. A ggplot was then created to plot density of log-odds by chronic kidney disease. A ROC plot was then created in order to visualize the trade-off between sensitivity and specificity. Area under the curve (AUC) was calculated to be .966. AUC determines how well a model predicts chronic kidney disease the best. This is considered a great AUC. A 10-fold CV was then run. This was to decrease overfitting of the model. After this, accuracy was calculated to be .241, specificity was calculated to .869, ppv was calculated to be 0, and AUC was calculated to be .956. This is still considered a great AUC score.   *
+
+```{r}
+#LASSO Regression: 
+library(glmnet)
+
+kidney1 <- kidney_disease1 %>% mutate(classification=ifelse(classification=="ckd",1,0))
+y <- as.matrix(kidney1$classification)
+x <- model.matrix(classification~age+bp+sg+al+rbc+su+ba+pc+pcc+bgr+bu+sc+sod+pot+hemo+rc++htn+dm+cad+appet+pe+ane, data=kidney1)[,-1]
+
+cv <- cv.glmnet(x,y, family = "binomial")
+lasso <- glmnet(x,y, family = "binomial", lambda = cv$lambda.1se)
+coef(lasso)
+
+#Cross-Validating: 
+
+set.seed(1234)
+k=10
+
+data3 <- kidney1 %>% sample_frac
+folds <- ntile(1:nrow(data3), n= 10)
+diags <- NULL
+for(i in 1:k) {
+  train <- data3[folds !=i,]
+  test <- data3[folds==i,]
+  truth <- test$classification
+  fit5 <- glm(classification ~ sg+al+pc+hemo+rc+htn+ dm, data = train, family = "binomial")
+  probs3 <- predict(fit5, newdata=test, type="response")
+  diags <- rbind(diags, class_diag(probs3, truth))
+}
+diags %>% summarize_all(mean)
+```
+
+*Number Six Explanation: After running a regression model, the variables retained are sugar, albumin, abnormal red blood cells, abnormal pus cells, blood glucose random, hemoglobin, red blood cell count, hyptertension classification, and diabetes mellitus classification. After running lasso regression and 10-fold CV, the accuracy increased. This was the best performance for predicting chronic kidney disease. All classification diagnostics increased. AUC was calculated to be 1 which is the highest calulcated AUC out of all models run.*
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
