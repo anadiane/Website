@@ -1,0 +1,6 @@
+"0",""
+"0","#ROCplot: "
+"0","library(plotROC)"
+"0","predicted <- ifelse(data$probs>.5,1,0)"
+"0","ROCplot <- ggplot(data) + geom_roc(aes(d=y, m=probs), n.cuts = 0)"
+"0","ROCplot"

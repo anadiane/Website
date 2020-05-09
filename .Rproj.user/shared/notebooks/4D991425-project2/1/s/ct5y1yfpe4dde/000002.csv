@@ -1,0 +1,3 @@
+"0","kidney_disease[kidney_disease==""""] <- NA"
+"0","kidney_disease1 <- na.omit(kidney_disease)"
+"0","kidney_disease1"

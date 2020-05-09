@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589053369093.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1140970817",
+    "id" : "D03B84CC",
+    "lastKnownWriteTime" : 1589053306,
+    "last_content_update" : 1589053443882,
+    "path" : "~/Senior Year/SDS348/Project 3 Stuff/Website/content/project2.Rmd",
+    "project_path" : "content/project2.Rmd",
+    "properties" : {
+        "cursorPosition" : "17,0",
+        "last_setup_crc32" : "89FEDD7Cd618498e",
+        "scrollLine" : "14"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

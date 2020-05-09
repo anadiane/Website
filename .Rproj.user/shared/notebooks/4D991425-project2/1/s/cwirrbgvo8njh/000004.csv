@@ -1,0 +1,4 @@
+"0",""
+"0","#Check Assumptions graphically or hypothesis testing: "
+"0","resids <- fit1$residuals; fitvals <- fit1$fitted.values"
+"0","ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, col=""red"")"

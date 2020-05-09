@@ -1,0 +1,33 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1589052493531.000,
+    "dirty" : false,
+    "encoding" : "",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "3A69950B",
+    "lastKnownWriteTime" : 22518191413985348,
+    "last_content_update" : 1589052493531,
+    "path" : null,
+    "project_path" : null,
+    "properties" : {
+        "cacheKey" : "62FF4116",
+        "caption" : "kidney_disease",
+        "contentUrl" : "grid_resource/gridviewer.html?env=&obj=kidney_disease&cache_key=62FF4116",
+        "displayedObservations" : 400,
+        "environment" : "",
+        "expression" : "kidney_disease",
+        "object" : "kidney_disease",
+        "preview" : 0,
+        "totalObservations" : 400,
+        "variables" : 26
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 7,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_dataframe"
+}

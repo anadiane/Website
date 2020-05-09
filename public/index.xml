@@ -88,5 +88,14 @@ Follow the following steps:
       <description>To me, music is an essential part of my everyday life. Music offers an opportunity to escape from the stress that accompanies my academic schedule and workload. Spotify has been my music source for years, and I knew the data collected from my Spotify would be an accurate representation of the songs and genre I most often listen to. During my data search, I found a data set from Kaggle that had collected the top fifty songs by country that were most played on Spotify in the year 2019.</description>
     </item>
     
+    <item>
+      <title>Project 2</title>
+      <link>/project2/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>The dataset chosen was obtained from Kaggle. A career in the medical field has been a goal of mine since high school. My interest in medicine and studying different diseases influenced my decision in choosing this dataset. The dataset contains different characteristics of about 400 patients in order to decipher indications of chronic kidney disease. The dataset contains 400 observations and 26 variables. The dataset measures blood pressure, red blood cells, albumin, sugar, red blood cell count, pus cell, pus cell clumps, bacteria precense, blood glucose random, blood urea, white blood cell count, hypertension, diabetes mellitus, coronary artery disease, anemia, chronic kidney disease classification, and more.</description>
+    </item>
+    
   </channel>
 </rss>

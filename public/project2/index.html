@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Ana Diane Cardenas" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 2</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">Project 2</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<p><em>The dataset chosen was obtained from Kaggle. A career in the medical field has been a goal of mine since high school. My interest in medicine and studying different diseases influenced my decision in choosing this dataset. The dataset contains different characteristics of about 400 patients in order to decipher indications of chronic kidney disease. The dataset contains 400 observations and 26 variables. The dataset measures blood pressure, red blood cells, albumin, sugar, red blood cell count, pus cell, pus cell clumps, bacteria precense, blood glucose random, blood urea, white blood cell count, hypertension, diabetes mellitus, coronary artery disease, anemia, chronic kidney disease classification, and more. In this report, a variety of R studio functions will be used to manipulate and model the data. First a MANOVA will be run followed by other tests to determine significant differences across multiple variables. A randomization test, plots, linear regressions, boostrapping, logistic regressions, and a LASSO regression are among the functions that will be used to model, test, and make predictions with the dataset being used.</em></p>
+<pre class="r"><code>library(lmtest)
+
+library(vegan)
+library(tidyverse)
+library(dplyr)
+#Manova Test:
+kidney_disease$ba &lt;- as.factor(kidney_disease$ba)
+class(kidney_disease$ba)</code></pre>
+<pre><code>## [1] &quot;factor&quot;</code></pre>
+<pre class="r"><code>kidney_disease$pcv &lt;- as.factor(kidney_disease$pcv)
+kidney_disease$wc &lt;- as.factor(kidney_disease$wc)
+kidney_disease$rc &lt;- as.factor(kidney_disease$rc)
+manova(cbind(al, su, bgr, bu,sc, sod, pot, hemo, pcv, wc, rc)~ba, data = kidney_disease)</code></pre>
+<pre><code>## Call:
+##    manova(cbind(al, su, bgr, bu, sc, sod, pot, hemo, pcv, wc, rc) ~ 
+##     ba, data = kidney_disease)
+## 
+## Terms:
+##                        ba Residuals
+## al                   77.5     356.4
+## su                   10.7     219.0
+## bgr               46250.3 1333221.7
+## bu                18019.1  453212.8
+## sc                   71.1    2601.5
+## sod                 318.9   11183.7
+## pot                   0.6    1940.4
+## hemo                206.3    1739.5
+## pcv                2083.6   19970.2
+## wc                 4664.8  214261.0
+## rc                 1895.3   42390.3
+## Deg. of Freedom         2       233
+## 
+## Residual standard errors: 1.236774 0.9695444 75.64378 44.10351 3.341451 6.928109 2.885789 2.732334 9.257908 30.3245 13.48824
+## Estimated effects may be unbalanced
+## 164 observations deleted due to missingness</code></pre>
+<pre class="r"><code>man1 &lt;- manova(cbind(al, su, bgr, bu,sc, sod, pot, hemo, pcv, wc, rc)~ba, data = kidney_disease)
+summary(man1)</code></pre>
+<pre><code>##            Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+## ba          2 0.23395   2.6976     22    448 6.227e-05 ***
+## Residuals 233                                             
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>#Univariate Anova: 
+summary.aov(man1)</code></pre>
+<pre><code>##  Response al :
+##              Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+## ba            2  77.51  38.756  25.337 1.105e-10 ***
+## Residuals   233 356.40   1.530                      
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response su :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)   
+## ba            2  10.654  5.3271   5.667 0.003952 **
+## Residuals   233 219.024  0.9400                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response bgr :
+##              Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+## ba            2   46250   23125  4.0415 0.01882 *
+## Residuals   233 1333222    5722                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response bu :
+##              Df Sum Sq Mean Sq F value  Pr(&gt;F)  
+## ba            2  18019  9009.5  4.6319 0.01065 *
+## Residuals   233 453213  1945.1                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response sc :
+##              Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+## ba            2   71.11  35.553  3.1842 0.04322 *
+## Residuals   233 2601.51  11.165                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response sod :
+##              Df  Sum Sq Mean Sq F value  Pr(&gt;F)  
+## ba            2   318.9 159.432  3.3216 0.03781 *
+## Residuals   233 11183.7  47.999                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response pot :
+##              Df  Sum Sq Mean Sq F value Pr(&gt;F)
+## ba            2    0.57  0.2828   0.034 0.9666
+## Residuals   233 1940.37  8.3278               
+## 
+##  Response hemo :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## ba            2  206.34 103.171  13.819 2.13e-06 ***
+## Residuals   233 1739.50   7.466                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response pcv :
+##              Df  Sum Sq Mean Sq F value   Pr(&gt;F)    
+## ba            2  2083.6 1041.82  12.155 9.52e-06 ***
+## Residuals   233 19970.2   85.71                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response wc :
+##              Df Sum Sq Mean Sq F value  Pr(&gt;F)  
+## ba            2   4665 2332.40  2.5364 0.08134 .
+## Residuals   233 214261  919.58                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+##  Response rc :
+##              Df Sum Sq Mean Sq F value   Pr(&gt;F)   
+## ba            2   1895  947.66  5.2089 0.006123 **
+## Residuals   233  42390  181.93                    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## 164 observations deleted due to missingness</code></pre>
+<pre class="r"><code>#Probability of at least one type 1 error: 
+1-((.95)^2)</code></pre>
+<pre><code>## [1] 0.0975</code></pre>
+<pre class="r"><code>#Bonferroni Correction:
+.05/2</code></pre>
+<pre><code>## [1] 0.025</code></pre>
+<p><em>Number One Explanation: A one-way MANOVA was conducted to determine the effect of bacteria being present or not present on multiple dependent variables. Null Hypothesis: For each response variable, the means of the the groups are equal. Alternative Hypothesis: For at lease 1 response variable, at least 1 group mean differs. Significant differences were found between presence of bacteria and no presence of bacteria for at least one of the dependednt variables, Pillai trace = 0.26, pseudo F= 6.18, p = &lt;.0001. Univariate ANOVAs for each dependent variable were conducted as follow-up tests to the MANOVA. Since only two groups were being compared, a post hoc anaylsis was not conducted.The univariate ANOVAs for albumin, sugar, blood glucose random, blood urea, serum creatinine, sodium, hemoglobin, packed cell volume, white blood cell count, and red blood cell count were significant, p&lt;.05 respecitvely. Bonferroni method for controlling Type one error rates for multiple comparison was calculated based on a running two tests. The boneferroni significance level used was .025. Using this, groups were found to differ from each other significantly in terms of albumin, sugar, blood glucose random, blood urea, hemoglobin, packed cell volume, and red blood cell count. The probability of at least one type one error was caluclated to be .098. Thus there was 9.74% chance of a type one error. MANOVA has multiple assumptions such as using random samples, mulivariate normalility of dependent variables, homogenity of within-group covariance matrices, linear relationships among dependent variables, no extreme univariate or mulivariate outliers, no multicollinearity. Since these observations are more likely to have been collected from people suffering from similar symptoms it is unlikely that the data collected is from random samples.</em></p>
+<pre class="r"><code>kidney_disease[kidney_disease==&quot;&quot;] &lt;- NA
+kidney_disease1 &lt;- na.omit(kidney_disease)
+kidney_disease1</code></pre>
+<pre><code>##    id age bp    sg al su      rbc       pc     pcc         ba bgr  bu  sc sod
+## 4   3  48 70 1.005  4  0   normal abnormal present notpresent 117  56 3.8 111
+## 10  9  53 90 1.020  2  0 abnormal abnormal present notpresent  70 107 7.2 114
+## 12 11  63 70 1.010  3  0 abnormal abnormal present notpresent 380  60 2.7 131
+##    pot hemo pcv    wc  rc htn  dm cad appet  pe ane classification
+## 4  2.5 11.2  32  6700 3.9 yes  no  no  poor yes yes            ckd
+## 10 3.7  9.5  29 12100 3.7 yes yes  no  poor  no yes            ckd
+## 12 4.2 10.8  32  4500 3.8 yes yes  no  poor yes  no            ckd
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 155 rows ]</code></pre>
+<pre class="r"><code>kidney_disease1$wc &lt;- as.numeric(kidney_disease1$wc)
+
+#Randomization Test:
+
+measureddifference &lt;- mean(kidney_disease1[kidney_disease1$ba == &quot;notpresent&quot;,]$wc)- mean(kidney_disease1[kidney_disease1$ba == &quot;present&quot;,]$wc)
+measureddifference</code></pre>
+<pre><code>## [1] 16.33904</code></pre>
+<pre class="r"><code>meandifference1 &lt;- vector()
+for (i in 1:5000) {
+  random &lt;- data.frame(wc=sample(kidney_disease1$wc), bapresent = kidney_disease1$ba)
+  meandifference1 [i] &lt;- mean(random[random$bapresent == &quot;notpresent&quot;,]$wc) - mean(random[random$bapresent == &quot;present&quot;,]$wc)
+}
+
+mean(meandifference1 &gt; 16.339 | meandifference1&lt; -16.339)</code></pre>
+<pre><code>## [1] 0.033</code></pre>
+<pre class="r"><code>mean(meandifference1&gt;15.951)*2</code></pre>
+<pre><code>## [1] 0.0476</code></pre>
+<pre class="r"><code>t.test(data = kidney_disease1, wc~ba)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  wc by ba
+## t = 1.8785, df = 12.368, p-value = 0.08408
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -2.549489 35.227572
+## sample estimates:
+## mean in group notpresent    mean in group present 
+##                 58.08904                 41.75000</code></pre>
+<pre class="r"><code>#Plot:
+{hist(meandifference1,main=&quot;&quot;,ylab=&quot;&quot;); abline(v = .05,col=&quot;red&quot;)}</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-2-1.png" width="672" style="display: block; margin: auto;" />
+<em>Number Two Explanation: The test chosen was a Permutation Randomization Test. The null hypothesis is that mean white blood cell count is the same for a patient with bacteria present vs bacteria not present. It is known that often when the body is fighing bacteria there is a higher white blood cell count. The alternate hypothesis is that the mean white blood cell count is different for a patient with bacteria present vs bacteria not present. The calculated actual mean difference between the groups was 16.339. A randomization test was then conducted by scrambling the data and breaking the associated between white blood cell count and bacteria being present. Mean difference was computed 5000 times. The p-value was calculated to be .05 by doing a two tail test. Thus, the null hypothesis cannot be rejected. The mean white blood cell count is not different between a patient with bacteria present vs a patient with no bacteria present. In the plot, the red line is where the actual mean difference is. The bars are expected mean differences if there was no association between white blood cell count and bacteria being present (null hypotheis being true). A t-test was conducted to confirm this conclusion. The p-value in the t-test was greater than .05. Therefore, the conclusion holds true.</em></p>
+<pre class="r"><code>#Linear regression model with interaction and mean centering: 
+kidney_disease1$rc &lt;- as.numeric(kidney_disease1$rc)
+kidney_disease1$hemo &lt;- as.numeric(kidney_disease1$hemo)
+kidney_disease1$hemo_c &lt;- kidney_disease1$hemo-mean(kidney_disease1$hemo, na.rm=T)
+kidney_disease1$ane &lt;- as.character(kidney_disease1$ane)
+library(lmtest)
+fit1 &lt;- lm(rc ~ hemo_c*ane, data = kidney_disease1)
+summary(fit1)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = rc ~ hemo_c * ane, data = kidney_disease1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -14.9572  -5.0320  -0.5228   4.4360  21.5098 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    32.6990     0.5882  55.587   &lt;2e-16 ***
+## hemo_c          2.4943     0.2510   9.938   &lt;2e-16 ***
+## aneyes         -8.1484     5.8971  -1.382    0.169    
+## hemo_c:aneyes  -0.3983     1.0554  -0.377    0.706    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.762 on 154 degrees of freedom
+## Multiple R-squared:  0.613,  Adjusted R-squared:  0.6055 
+## F-statistic: 81.33 on 3 and 154 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>#Plot regression: 
+qplot(x = rc, y = hemo_c, color = ane, data = kidney_disease1) +
+stat_smooth(method = &quot;lm&quot;, se = FALSE, fullrange = TRUE)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Check Assumptions graphically or hypothesis testing: 
+resids &lt;- fit1$residuals; fitvals &lt;- fit1$fitted.values
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, col=&quot;red&quot;)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot()+geom_qq(aes(sample=resids))+geom_qq_line(aes(sample=resids, col = &#39;red&#39;))</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-3-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#Recompute regression with robust standard errors via coeftest: 
+coeftest(fit1, ycoc=vcocHC(fit1))</code></pre>
+<pre><code>## 
+## t test of coefficients:
+## 
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   32.69898    0.58825 55.5873   &lt;2e-16 ***
+## hemo_c         2.49430    0.25099  9.9381   &lt;2e-16 ***
+## aneyes        -8.14836    5.89712 -1.3818   0.1690    
+## hemo_c:aneyes -0.39835    1.05542 -0.3774   0.7064    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p><em>Numebr Three Explanation: It is common for anemic patients to have low red blood cell counts and to be low in hemoglobin. Thus, anemia classification, hemoglobin levels, and red blood cell count were the variables chosen to run a regression model with an interaction. First, hemoglobin was mean centered. A linear regression was then run with an interaction between anemia and mean center hemoglobin levels to test the effect of anemia differs based on mean centered hemoglobin levels. Controlling for hemoglobin, red blood cell count in non-anemic patients is 8.15 millions/cmm lower than patients that are anemic on average (t=-1.382). Non-anemic patients show an increase of 2.50 millions/cmm for every 1-unit increase in hemoglobin on average(t=9.938). Predicted red blood cell count for a non-anemic patient with an average hemoglobin is 32.70 millions/cmm. The slope for hemoglobin on red blood cell count is .398 less for patients with anemia compared to patients that are not anemic(t=-0.377). Based on the ggplot made, the assumption for homoscedasticity does not appear to be met. The residuals do not look equally distributed. Thus, it appears that linearity is not met as well. Normallity is assumed because there is only a little deviation at each end. After recomputing regression model results with robust standard errors, predicted red blood cell count for an average hemoglobin, non-anemic is 32.70 millions/cmm. Also, non-anemic patients show an increase of 2.494 millions/cmm for every one unit increase in hemoglobin on average (significant effect, t=9.94, p&lt;.001). All other effects were non-significant. The model explains 60.55% of variation (Adjusted R-squared: 0.6055).</em></p>
+<pre class="r"><code>#Regression with bootstrap standard errors: 
+samp_distn&lt;-replicate(5000, {
+boot_dat &lt;- sample_frac(kidney_disease1, replace=T) #bootstrap your data
+fit2 &lt;- lm(rc~hemo_c*ane, data=boot_dat) #fit model
+coef(fit2) #save coefs
+})
+samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>##   (Intercept)    hemo_c   aneyes hemo_c:aneyes
+## 1   0.5882275 0.2457892 5.037308       1.00895</code></pre>
+<p><em>Number Four Explanation: After bootstrapping the standard errors, it can be determined that the standard errors for majority of the variables decreased. </em></p>
+<pre class="r"><code>#Logistic regression predicting a binary categorical variable from at least two explanatory variables:
+kidney_disease1$bu &lt;- as.numeric(kidney_disease1$bu)
+kidney_disease1$classification &lt;- as.factor(kidney_disease1$classification)
+
+data &lt;- kidney_disease1%&gt;% mutate(y=ifelse(classification==&quot;ckd&quot;,1,0))
+
+fit3 &lt;- glm(y ~ htn + bu + cad, data = data, family = &quot;binomial&quot;)
+coeftest(fit3)</code></pre>
+<pre><code>## 
+## z test of coefficients:
+## 
+##                Estimate  Std. Error z value  Pr(&gt;|z|)    
+## (Intercept)   -7.166140    2.155254 -3.3250 0.0008843 ***
+## htnyes        21.712204 2853.154781  0.0076 0.9939282    
+## bu             0.105990    0.047517  2.2305 0.0257117 *  
+## cadyes        -0.500573 4974.888399 -0.0001 0.9999197    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>exp(coef(fit3)) %&gt;% round(3) %&gt;% t</code></pre>
+<pre><code>##      (Intercept)     htnyes    bu cadyes
+## [1,]       0.001 2688378176 1.112  0.606</code></pre>
+<pre class="r"><code>#confusion matrix: 
+library(dplyr)
+probs &lt;- predict(fit3, type = &quot;response&quot;)
+table(predict= as.numeric(probs&gt;.5), truth = data$y) %&gt;% addmargins()</code></pre>
+<pre><code>##        truth
+## predict   0   1 Sum
+##     0   115   6 121
+##     1     0  37  37
+##     Sum 115  43 158</code></pre>
+<pre class="r"><code>data</code></pre>
+<pre><code>##   id age bp    sg al su      rbc       pc     pcc         ba bgr  bu  sc sod
+## 1  3  48 70 1.005  4  0   normal abnormal present notpresent 117  56 3.8 111
+## 2  9  53 90 1.020  2  0 abnormal abnormal present notpresent  70 107 7.2 114
+## 3 11  63 70 1.010  3  0 abnormal abnormal present notpresent 380  60 2.7 131
+##   pot hemo pcv wc rc htn  dm cad appet  pe ane classification    hemo_c y
+## 1 2.5 11.2  32 64 21 yes  no  no  poor yes yes            ckd -2.487342 1
+## 2 3.7  9.5  29 20 19 yes yes  no  poor  no yes            ckd -4.187342 1
+## 3 4.2 10.8  32 45 20 yes yes  no  poor yes  no            ckd -2.887342 1
+##  [ reached &#39;max&#39; / getOption(&quot;max.print&quot;) -- omitted 155 rows ]</code></pre>
+<pre class="r"><code>#Accuracy, Sensitivity, Specificity, Recall:
+
+#Accuracy:
+(115+37)/158</code></pre>
+<pre><code>## [1] 0.9620253</code></pre>
+<pre class="r"><code>#Sensitivity: 
+37/43</code></pre>
+<pre><code>## [1] 0.8604651</code></pre>
+<pre class="r"><code>#Specificity: 
+115/115</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>#Precision (PPV): 
+37/37</code></pre>
+<pre><code>## [1] 1</code></pre>
+<pre class="r"><code>#GGplot: 
+
+data$logit &lt;- predict(fit3, type = &quot;link&quot;)
+
+data%&gt;%ggplot()+geom_density(aes(logit,color=classification,fill=classification), alpha=.4)+
+  theme(legend.position=c(.85,.85))+geom_vline(xintercept=0)</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-5-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#ROCplot: 
+library(plotROC)
+predicted &lt;- ifelse(data$probs&gt;.5,1,0)
+ROCplot &lt;- ggplot(data) + geom_roc(aes(d=y, m=probs), n.cuts = 0)
+ROCplot</code></pre>
+<p><img src="/project2_files/figure-html/unnamed-chunk-5-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>##   PANEL group       AUC
+## 1     1    -1 0.9655207</code></pre>
+<pre class="r"><code>#AUC: 
+
+library(knitr)
+opts_chunk$set(fig.align=&quot;center&quot;, fig.height=5, message=FALSE, warning=FALSE, fig.width=8, tidy.opts=list(width.cutoff=60),tidy=TRUE)
+
+class_diag&lt;-function(probs,truth){
+  
+  tab&lt;-table(factor(probs&gt;.5,levels=c(&quot;FALSE&quot;,&quot;TRUE&quot;)),truth)
+  acc=sum(diag(tab))/sum(tab)
+  sens=tab[2,2]/colSums(tab)[2]
+  spec=tab[1,1]/colSums(tab)[1]
+  ppv=tab[2,2]/rowSums(tab)[2]
+
+  if(is.numeric(truth)==FALSE &amp; is.logical(truth)==FALSE) truth&lt;-as.numeric(truth)-1
+  
+  ord&lt;-order(probs, decreasing=TRUE)
+  probs &lt;- probs[ord]; truth &lt;- truth[ord]
+  
+  TPR=cumsum(truth)/max(1,sum(truth)) 
+  FPR=cumsum(!truth)/max(1,sum(!truth))
+  
+  dup&lt;-c(probs[-1]&gt;=probs[-length(probs)], FALSE)
+  TPR&lt;-c(0,TPR[!dup],1); FPR&lt;-c(0,FPR[!dup],1)
+  
+  n &lt;- length(TPR)
+  auc&lt;- sum( ((TPR[-1]+TPR[-n])/2) * (FPR[-1]-FPR[-n]) )
+
+  data.frame(acc,sens,spec,ppv,auc)
+}
+class_diag(probs, data$y)</code></pre>
+<pre><code>##         acc      sens spec ppv       auc
+## 1 0.9620253 0.8604651    1   1 0.9655207</code></pre>
+<pre class="r"><code>#10-Fold CV: 
+
+set.seed(1234) 
+k=10 
+data2 &lt;- data %&gt;% sample_frac 
+folds &lt;-ntile(1:nrow(data2), n=10) 
+diags &lt;- NULL 
+
+for (i in 1:k) 
+  { train&lt;- data2[folds !=1,] 
+  test &lt;- data2[folds ==i, ]
+  truth &lt;- test$classification 
+  fit4 &lt;- glm(classification ~ htn + bu + cad, data = train, family = &quot;binomial&quot;) 
+  probs2 &lt;- predict(fit4, newdata = test, type = &quot;response&quot;) 
+  diags &lt;- rbind(diags, class_diag(probs2, truth)) }
+diags %&gt;% summarize_all(mean)</code></pre>
+<pre><code>##       acc sens      spec       ppv       auc
+## 1 0.96875    1 0.8690476 0.9595238 0.9555952</code></pre>
+<p><em>Number Five Explanation: Odds of chronic kidney disease for a patient with no hypertension, no coronarty artery disease and bu=0 is .001.Controlling for blood urea, odds of chronic kidney disease for a person with hypertension is 2688378176 times odds of chronic kidney disease for a person without hypertension. Controlling for hypertension and coronary artery disease, for every one unit increase in blood urea level odds of chronic kidney disease increases by a factor of 1.112. Controlling for hypertension and blood urea, odds of chronic kidney disease for a person with coronary artery disease is .606 times odds odds of chronic kidney disease for a person without coronary artery disease. A confusion matrix was made. The accuracy was calculated to be .96. Sensitivity, which is the true positive rate, was calculated to be .8604. Specificity, which is the true negative rate, was calculated to be 1. Precision, which is the positive predicted value, was calculated to be 1. A ggplot was then created to plot density of log-odds by chronic kidney disease. A ROC plot was then created in order to visualize the trade-off between sensitivity and specificity. Area under the curve (AUC) was calculated to be .966. AUC determines how well a model predicts chronic kidney disease the best. This is considered a great AUC. A 10-fold CV was then run. This was to decrease overfitting of the model. After this, accuracy was calculated to be .241, specificity was calculated to .869, ppv was calculated to be 0, and AUC was calculated to be .956. This is still considered a great AUC score. </em></p>
+<pre class="r"><code>#LASSO Regression: 
+library(glmnet)
+
+kidney1 &lt;- kidney_disease1 %&gt;% mutate(classification=ifelse(classification==&quot;ckd&quot;,1,0))
+y &lt;- as.matrix(kidney1$classification)
+x &lt;- model.matrix(classification~age+bp+sg+al+rbc+su+ba+pc+pcc+bgr+bu+sc+sod+pot+hemo+rc++htn+dm+cad+appet+pe+ane, data=kidney1)[,-1]
+
+cv &lt;- cv.glmnet(x,y, family = &quot;binomial&quot;)
+lasso &lt;- glmnet(x,y, family = &quot;binomial&quot;, lambda = cv$lambda.1se)
+coef(lasso)</code></pre>
+<pre><code>## 24 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+##                         s0
+## (Intercept)   2.105216e+02
+## age           .           
+## bp            .           
+## sg           -2.021148e+02
+## al            2.156906e+00
+## rbcnormal    -1.230922e-01
+## su            .           
+## banotpresent  .           
+## bapresent     .           
+## pcnormal     -8.245432e-01
+## pccpresent    .           
+## bgr           6.727288e-05
+## bu            .           
+## sc            .           
+## sod           .           
+## pot           .           
+## hemo         -4.735200e-01
+## rc           -4.511904e-02
+## htnyes        4.632578e-01
+## dmyes         1.313840e+00
+## cadyes        .           
+## appetpoor     .           
+## peyes         .           
+## aneyes        .</code></pre>
+<pre class="r"><code>#Cross-Validating: 
+
+set.seed(1234)
+k=10
+
+data3 &lt;- kidney1 %&gt;% sample_frac
+folds &lt;- ntile(1:nrow(data3), n= 10)
+diags &lt;- NULL
+for(i in 1:k) {
+  train &lt;- data3[folds !=i,]
+  test &lt;- data3[folds==i,]
+  truth &lt;- test$classification
+  fit5 &lt;- glm(classification ~ sg+al+pc+hemo+rc+htn+ dm, data = train, family = &quot;binomial&quot;)
+  probs3 &lt;- predict(fit5, newdata=test, type=&quot;response&quot;)
+  diags &lt;- rbind(diags, class_diag(probs3, truth))
+}
+diags %&gt;% summarize_all(mean)</code></pre>
+<pre><code>##      acc sens spec ppv auc
+## 1 0.9875 0.95    1   1   1</code></pre>
+<p><em>Number Six Explanation: After running a regression model, the variables retained are sugar, albumin, abnormal red blood cells, abnormal pus cells, blood glucose random, hemoglobin, red blood cell count, hyptertension classification, and diabetes mellitus classification. After running lasso regression and 10-fold CV, the accuracy increased. This was the best performance for predicting chronic kidney disease. All classification diagnostics increased. AUC was calculated to be 1 which is the highest calulcated AUC out of all models run.</em></p>
+<p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>
