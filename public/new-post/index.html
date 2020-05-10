@@ -1,13 +1,64 @@
----
-title: Project 1 by Ana Cardenas
-author: ''
-showpagemeta: false
-slug: new-post
-categories: []
-tags: []
-description: ''
----
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Ana Diane Cardenas" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 1 by Ana Cardenas</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
 
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+        <section id="projects">
+  <div class="container">
+    <h3></h3>
+    <div class="panel panel-default">
+      <div class="panel-body">
+      
 
 
 <p><em>To me, music is an essential part of my everyday life. Music offers an opportunity to escape from the stress that accompanies my academic schedule and workload. Spotify has been my music source for years, and I knew the data collected from my Spotify would be an accurate representation of the songs and genre I most often listen to. During my data search, I found a data set from Kaggle that had collected the top fifty songs by country that were most played on Spotify in the year 2019. I was interested to learn which songs I had listened to that also appeared in the top 50 songs of a specific country. The data set from Kaggle also contained variables regarding the beats per minute of the song, energy of the song, danceability of the song, loudness of the song, liveness of the long, valence of the song, duration of the long, acousticness of the song, and popularity of the song. Comparing these two data sets gave me a chance to learn more about the songs and genre that I tend to listen to. My dataset contained the date, song title, artist name, and the number of minutes I listened to the specific song. Combining both data resulted in the necessary amount of numeric and total variables needed. Within this report, different R-Studio functions that were learned in class will be used to manipulate the data in order to learn more about specific songs. Different statistics will be applied to specific numerical variables as well. Plots will then be made to show relationships among different numerical variables and categorical variables. Lastly, the data will be manipulated using clustering functions in order to determine more relationships among the numerical and categorical variables. It is expected that the danceability of a song would also have high energy and liveness. It is also expected that when clustering, the same artist with a different song will be close in distance to themselves. </em></p>
@@ -653,3 +704,36 @@ pivot_wider(-n,names_from=top.genre,values_from=prop,values_fill = list(prop=0))
 ## #   rap` &lt;dbl&gt;, `r&amp;b en espanol` &lt;dbl&gt;</code></pre>
 <p><em>Clustering by categorical variables was then produced by the “PAM” and “gower” functions. Two clusters were suggested and therefore chosen. After clustering country, artist name, track name, top genre, popularity level, liveness level, and energy level, tracks most similar and most dissimilar were determined. It was found that the tracks most like each other were performed by the same artist. The two tracks found most dissimilar were not performed by the same artist which was expected. To characterize the clusters more, proportions were determined based on the top genre. Cluster 1 had majority of tracks in the Latin genre. Cluster 2 had tracks in multiple genres. Cluster 3 had tracks that were majority among rap genres.</em></p>
 <p>Note that the <code>echo = FALSE</code> parameter was added to the code chunk to prevent printing of the R code that generated the plot.</p>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

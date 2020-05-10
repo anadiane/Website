@@ -1,9 +1,11 @@
 ---
-title: "Project 1 by Ana Cardenas"
-output:
-  pdf_document: default
-  html_document:
-    df_print: paged
+title: Project 1 by Ana Cardenas
+author: ''
+showpagemeta: false
+slug: new-post
+categories: []
+tags: []
+description: ''
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, eval = TRUE, fig.align = "center", warning = F, message = F,
