@@ -22,7 +22,7 @@ Now, lets make things a little bit more complicated (for someone new to Python a
 funexample= "You can also match digits. Lets try and match 1,2,3,4,5,6."
 re.findall('\d+',funexample)
 ```
-The output only gave me the digits. This is because backslad followed by "d" grabs digits while the + ensures your grabbing all the digits. I know this might appear to be simple but it actually was confusing when I first tested it out. Why not keep going? 
+The output only gave me the digits. This is because backslash followed by "d" grabs digits while the + ensures your grabbing all the digits. I know this might appear to be simple but it actually was confusing when I first tested it out. Why not keep going? 
 
 Here is going a step further in the difficulty level (actually it more so just looks intimidating). 
 
@@ -32,5 +32,5 @@ re.findall('\d+\.\d+\.\d+\.\d+',string2)
 ```
 This output matched all the IP addresses from the string! As you can see only a few additional characters were added to the code to make this happen. The additional code excludes everything that is not an IP address.
 
-I hope that this helped you see some of fun things you can do in python that are somewhat similar actions you can use in R. Remember that you can do anything you set your mind to even if it appears intimidating! Have a great rest of your day and remeber to get fresh air!![](/blog/2020-05-09-python-and-r_files/IMG_2694.JPG)
+I hope that this helped you see some of fun things you can do in python that  somewhat have the same purpose as a few functions that you can use in R. Remember that you can do anything you set your mind to even if it appears intimidating! Have a great rest of your day and remeber to get fresh air! Walking in nature is a great opportunity to take a moment to grasp the new things you learn every day!![](/blog/2020-05-09-python-and-r_files/IMG_2694.JPG)
 
