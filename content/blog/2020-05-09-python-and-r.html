@@ -1,0 +1,30 @@
+---
+title: Python and R
+author: Ana Cardenas
+date: '2020-05-09'
+slug: python-and-r
+categories: []
+tags: []
+description: ''
+---
+
+
+
+<p>Over the past few months I have had the unique opportunity to learn how to code in RStudio. In recent weeks, I was introduced to the world of Python. It has been fascinating to learn how the two can interact with one another and work together.
+In this blog, I am going to display one of the fun (I found fun) functions that you can run in Python. In R, you are able to grab specific variables or observations that you are intersted in analyzing. You do this by using “filter” or “select” with the “%” function. Well python can also grab or match what you are interested in as well. I am going to show a couple of examples of how to do that.</p>
+<pre class="python"><code>import re
+x=&quot;I am going to match the letter a followed by anything.&quot; 
+re.findall(r&quot;a.&quot;,x)</code></pre>
+<pre><code>## [&#39;am&#39;, &#39;at&#39;, &#39;a &#39;, &#39;an&#39;]</code></pre>
+<p>As you can see, the output is all of the times “a” is followed by something because the period after the “a” indicated a wildcard which can be anything.</p>
+<p>Now, lets make things a little bit more complicated (for someone new to Python at least).</p>
+<pre class="python"><code>funexample= &quot;You can also match digits. Lets try and match 1,2,3,4,5,6.&quot;
+re.findall(&#39;\d+&#39;,funexample)</code></pre>
+<pre><code>## [&#39;1&#39;, &#39;2&#39;, &#39;3&#39;, &#39;4&#39;, &#39;5&#39;, &#39;6&#39;]</code></pre>
+<p>The output only gave me the digits. This is because backslad followed by “d” grabs digits while the + ensures your grabbing all the digits. I know this might appear to be simple but it actually was confusing when I first tested it out. Why not keep going?</p>
+<p>Here is going a step further in the difficulty level (actually it more so just looks intimidating).</p>
+<pre class="python"><code>string2=&quot;Jan 13 00:48:59: DROP service 68-&gt;67(udp) from 213.92.153.167 to 69.4 3.107.219, prefix: \&quot;spoof iana-0/8\&quot; \ (in: eth0 69.43.112.233(38:f8:b7:90:45:92):68 -&gt; 217.70.100.113(00:21:87:79:9 c:d9):67 UDP len:576 ttl:64) \ Jan 13 12:02:48: ACCEPT service dns from 74.125.186.208 to firewall(pub-nic-dn s), prefix: \&quot;none\&quot; \ (in: eth0 74.125.186.208(00:1a:e3:52:5d:8e):36008 -&gt; 140.105.63.158(00:1a:9a:8 6:2e:62):53 UDP len:82 ttl:38) \ Jan 13 17:44:52: DROP service 68-&gt;67(udp) from 172.45.240.237 to 217.70.177.6 0, prefix: \&quot;spoof iana-0/8\&quot; \ (in: eth0 216.34.90.16(00:21:91:fe:a2:6f):68 -&gt; 69.43.85.253(00:07:e1:7c:53:d b):67 UDP len:328 ttl:64) \ Jan 13 17:52:08: ACCEPT service http from 213.121.184.130 to firewall(pub-ni c), prefix: \&quot;none\&quot; \ (in: eth0 213.121.184.130(00:05:2e:6a:a4:14):8504 -&gt; 140.105.63.164(00:60:11:9 2:ed:1b):80 TCP flags: ****S* len:52 ttl:109)&quot; 
+re.findall(&#39;\d+\.\d+\.\d+\.\d+&#39;,string2)</code></pre>
+<pre><code>## [&#39;213.92.153.167&#39;, &#39;69.43.112.233&#39;, &#39;217.70.100.113&#39;, &#39;74.125.186.208&#39;, &#39;74.125.186.208&#39;, &#39;140.105.63.158&#39;, &#39;172.45.240.237&#39;, &#39;217.70.177.6&#39;, &#39;216.34.90.16&#39;, &#39;69.43.85.253&#39;, &#39;213.121.184.130&#39;, &#39;213.121.184.130&#39;, &#39;140.105.63.164&#39;]</code></pre>
+<p>This output matched all the IP addresses from the string! As you can see only a few additional characters were added to the code to make this happen. The additional code excludes everything that is not an IP address.</p>
+<p>I hope that this helped you see some of fun things you can do in python that are somewhat similar actions you can use in R. Remember that you can do anything you set your mind to even if it appears intimidating! Have a great rest of your day and remeber to get fresh air!<img src="/blog/2020-05-09-python-and-r_files/IMG_2694.JPG" /></p>
