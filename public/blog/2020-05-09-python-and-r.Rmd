@@ -8,7 +8,7 @@ tags: []
 description: ''
 ---
 Over the past few months I have had the unique opportunity to learn how to code in RStudio. In recent weeks, I was introduced to the world of Python. It has been fascinating to learn how the two can interact with one another and work together. 
-In this blog, I am going to display one of the fun (I found fun) functions that you can run in Python. In R, you are able to grab specific variables or observations that you are intersted in analyzing. You do this by using "filter" or "select" with the "%" function. Well python can also grab or match what you are interested in as well. I am going to show a couple of examples of how to do that. 
+In this blog, I am going to display one of the fun (I found fun) functions that you can run in Python. In R, you are able to grab specific variables or observations that you are intersted in analyzing. Well python can also grab or match what you are interested in. I am going to show a couple of examples of how to do that. 
 ```{python}
 import re
 x="I am going to match the letter a followed by anything." 
@@ -32,5 +32,5 @@ re.findall('\d+\.\d+\.\d+\.\d+',string2)
 ```
 This output matched all the IP addresses from the string! As you can see only a few additional characters were added to the code to make this happen. The additional code excludes everything that is not an IP address.
 
-I hope that this helped you see some of fun things you can do in python that  somewhat have the same purpose as a few functions that you can use in R. Remember that you can do anything you set your mind to even if it appears intimidating! Have a great rest of your day and remeber to get fresh air! Walking in nature is a great opportunity to take a moment to grasp the new things you learn every day!![](/blog/2020-05-09-python-and-r_files/IMG_2694.JPG)
+I hope that this helped you see some of the fun things you can do in python that give you the ability to match what you are interested in out of a string you have created. I found doing this intimidating at first, but now I love when I am able to figure out how to match what I want! Have a great rest of your day and remeber to get fresh air! Walking in nature is a great opportunity to take a moment to grasp the new things you learn. My picture below is a view I often get to see on these walks of mine![](/blog/2020-05-09-python-and-r_files/IMG_2694.JPG)
 
